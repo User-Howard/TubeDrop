@@ -2,14 +2,15 @@
 Utility functions and classes for the YouTube Downloader project.
 This module contains utility classes and functions used throughout the project.
 """
+
 import logging
 
 
 class MyLogger:
     """Custom logger for yt-dlp."""
 
-    def __init__(self):
-        self.logger = logging.getLogger('yt-dlp')
+    def __init__(self, name: str = "yt-dlp"):
+        self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO)
 
         # 避免重複添加handler
@@ -20,8 +21,8 @@ class MyLogger:
 
             # Create formatter
             formatter = logging.Formatter(
-                fmt='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
-                datefmt='%Y-%m-%d %H:%M:%S'
+                fmt="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
             )
 
             # Add formatter to ch
