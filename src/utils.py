@@ -3,7 +3,11 @@ Utility functions and classes for the YouTube Downloader project.
 This module contains utility classes and functions used throughout the project.
 """
 
+import subprocess
+import re
 import logging
+
+from pydantic import HttpUrl
 
 
 class MyLogger:
@@ -51,3 +55,23 @@ logger = MyLogger()
 
 def get_logger():
     return logger
+
+
+def get_title(url: HttpUrl) -> str:
+    result = subprocess.run(
+        ["yt-dlp", "--get-title", str(url)],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    return result.stdout.strip()
+
+
+def extract_percent(line: str) -> float | None:
+    match = re.search(r"(\d{1,3}(?:\.\d+)?)%", line)
+    if not match:
+        return None
+    try:
+        return float(match.group(1))
+    except (ValueError, AttributeError):
+        return None

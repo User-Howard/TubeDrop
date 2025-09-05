@@ -4,6 +4,7 @@ from pathlib import Path
 from pydantic import BaseModel, HttpUrl
 
 
+
 class TaskStatus(Enum):
     PENDING = "pending"
     DOWNLOADING = "downloading"
@@ -14,6 +15,8 @@ class TaskStatus(Enum):
 class TaskInfo(BaseModel):
     id: str
     url: HttpUrl
+    title: str
+
     status: TaskStatus = TaskStatus.PENDING
     progress: float = 0.0
     file_path: Path | None = None
