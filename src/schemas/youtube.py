@@ -6,12 +6,10 @@ from pydantic import BaseModel, Field, HttpUrl
 
 
 class TaskStatus(str, Enum):
-    """任務狀態 - 保持簡單但完整的狀態追蹤"""
-
-    PENDING = "pending"  # 剛提交，等待處理
-    DOWNLOADING = "downloading"  # 正在下載中
-    COMPLETED = "completed"  # 下載完成
-    FAILED = "failed"  # 下載失敗
+    PENDING = "pending"
+    DOWNLOADING = "downloading"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class YouTubeDownloadRequest(BaseModel):
@@ -40,6 +38,6 @@ class DownloadTask(BaseModel):
     status: TaskStatus = Field(..., description="目前下載狀態")
     progress: Optional[float] = Field(None, ge=0, le=100, description="下載進度百分比")
     video_info: Optional[VideoInfo] = Field(None, description="影片資訊")
-    download_url: Optional[str] = Field(None, description="檔案下載連結（完成時才有）")
-    error_message: Optional[str] = Field(None, description="錯誤訊息（失敗時才有）")
+    download_url: Optional[str] = Field(None, description="檔案下載連結")
+    error_message: Optional[str] = Field(None, description="錯誤訊息")
     created_at: str = Field(..., description="任務開始時間")

@@ -34,7 +34,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
-RUN mkdir -p /app/downloads
+RUN mkdir -p /app/downloads /app/tmp/downloads
 
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []

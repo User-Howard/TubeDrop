@@ -7,12 +7,10 @@ import threading
 import signal
 from pathlib import Path
 import os
-from utils import extract_percent
 import subprocess
 
-from utils import get_logger
-
-from models import downloads_db
+from .utils import extract_percent, get_logger
+from .models import downloads_db, TEMP_DIR
 
 class VideoDownloader:
     def __init__(self, task_id: str, url: str):
@@ -42,11 +40,14 @@ class VideoDownloader:
     def download(self, filename: str) -> bool:
         self.logger.info("Starting download process...")
 
+        # Ensure temp directory exists
+        TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
         cmd = [
             "yt-dlp",
             f"{self.url}",
             "--merge-output-format", "mp4",
-            "--output", f"downloads/{filename}.%(ext)s",
+            "--output", f"{TEMP_DIR}/{filename}.%(ext)s",
             "--no-playlist",
             "--progress",
         ]
@@ -116,7 +117,8 @@ class VideoDownloader:
         if self.process:
             self._terminate_process()
 
-        for part_file in Path("downloads").glob(f"{self.task_id}*.part"):
+        # Clean up partial files from temp directory
+        for part_file in TEMP_DIR.glob(f"{self.task_id}*.part"):
             try:
                 os.remove(part_file)
                 self.logger.info(f"Removed partial file: {part_file}")

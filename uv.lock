@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.9"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -532,7 +532,6 @@ version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "uvicorn" },
     { name = "yt-dlp" },
 ]
 
@@ -542,12 +541,12 @@ dev = [
     { name = "isort" },
     { name = "mypy" },
     { name = "pylint" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.116.1" },
-    { name = "uvicorn", specifier = ">=0.35.0" },
     { name = "yt-dlp", specifier = ">=2025.7.21" },
 ]
 
@@ -557,6 +556,7 @@ dev = [
     { name = "isort", specifier = ">=6.0.1" },
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "pylint", specifier = ">=3.3.7" },
+    { name = "uvicorn", specifier = ">=0.35.0" },
 ]
 
 [[package]]

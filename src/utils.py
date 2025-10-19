@@ -8,6 +8,9 @@ import re
 import logging
 
 from pydantic import HttpUrl
+from typing import Optional, Dict, Any
+
+from .models import VideoInfo
 
 
 class MyLogger:
@@ -17,22 +20,17 @@ class MyLogger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO)
 
-        # 避免重複添加handler
         if not self.logger.handlers:
-            # Create console handler and set level
             ch = logging.StreamHandler()
             ch.setLevel(logging.INFO)
 
-            # Create formatter
             formatter = logging.Formatter(
                 fmt="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
             )
 
-            # Add formatter to ch
             ch.setFormatter(formatter)
 
-            # Add ch to logger
             self.logger.addHandler(ch)
 
             self.logger.propagate = False
@@ -57,14 +55,32 @@ def get_logger():
     return logger
 
 
-def get_title(url: HttpUrl) -> str:
-    result = subprocess.run(
-        ["yt-dlp", "--get-title", str(url)],
-        capture_output=True,
-        text=True,
-        check=True
-    )
-    return result.stdout.strip()
+def get_video_info(url: HttpUrl) -> Optional[VideoInfo]:
+    try:
+        result = subprocess.run(
+            ["yt-dlp", "--get-title", str(url)],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if result.returncode == 0:
+            title = result.stdout.strip()
+            if not title:
+                logger.warning(f"Got empty title for {url}")
+                title = "Unknown Title"
+            return VideoInfo(title=title)
+        else:
+            error_msg = result.stderr.strip() if result.stderr else "Unknown error"
+            logger.warning(f"Failed to get video info for {url}: {error_msg}")
+            return None
+
+    except subprocess.TimeoutExpired:
+        logger.error(f"Timeout getting video info for {url}")
+        return None
+    except Exception as e:
+        logger.error(f"Error getting video info for {url}: {e}")
+        return None
 
 
 def extract_percent(line: str) -> float | None:
